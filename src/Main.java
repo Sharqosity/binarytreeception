@@ -2,7 +2,6 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Andy Wang is a loser");
         JFrame frame = new JFrame("Tree");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(0,0,800,600);

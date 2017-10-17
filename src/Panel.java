@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class Panel extends JPanel {
 
     static ArrayList<Node> nodes = new ArrayList<>();
-//    Rectangle toolNode = new Rectangle(675, 250, 100, 100);
     Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
 
     Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);

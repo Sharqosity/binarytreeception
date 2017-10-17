@@ -23,7 +23,6 @@ public class Panel extends JPanel {
         Timer timer = new Timer(40, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                checkDeletion();
                 repaint();
             }
         });
@@ -66,6 +65,7 @@ public class Panel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 mouse = new Rectangle(-999, -999, 12, 19);
+                checkDeletion();
             }
 
             @Override

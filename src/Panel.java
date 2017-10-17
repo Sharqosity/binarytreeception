@@ -12,8 +12,10 @@ import java.util.ArrayList;
 public class Panel extends JPanel {
 
     static ArrayList<Node> nodes = new ArrayList<>();
-    Rectangle toolNode = new Rectangle(675, 250, 100, 100);
-    Rectangle deleteNode = new Rectangle(675, 450, 100, 100);
+//    Rectangle toolNode = new Rectangle(675, 250, 100, 100);
+    Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
+
+    Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     Node currNode;
     int defaultValue = 0;
@@ -83,6 +85,14 @@ public class Panel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        //anti-aliasing
+        RenderingHints rh = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+        g2.setRenderingHints(rh);
+
         for(Node n : nodes) {
             n.display(g2);
         }
@@ -91,9 +101,12 @@ public class Panel extends JPanel {
 
     public void checkDeletion() {
         if(currNode != null) {
-            if (new Rectangle(currNode.getX(), currNode.getY(), currNode.getDiameter(), currNode.getDiameter()).intersects(deleteNode)) {
+            if (deleteNode.contains(currNode.getX() + currNode.getDiameter()/2, currNode.getY() + currNode.getDiameter()/2)) {
                 nodes.remove(currNode);
             }
+//            if (new Rectangle(currNode.getX(), currNode.getY(), currNode.getDiameter(), currNode.getDiameter()).intersects(deleteNode)) {
+//                nodes.remove(currNode);
+//            }
         }
     }
 
@@ -107,4 +120,6 @@ public class Panel extends JPanel {
         g2.setColor(Color.WHITE);
         g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
     }
+
+
 }

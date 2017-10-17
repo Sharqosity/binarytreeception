@@ -17,12 +17,18 @@ public class Panel extends JPanel {
     Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     Node currNode;
+    Node snapNode;
+    Node snapPreviewParent;
     int defaultValue = 0;
     private int c,z;
 
+    final int SNAP_OFFSET_X = 100;
+    final int SNAP_OFFSET_Y = 100;
+
+
     public Panel() {
         initControls();
-        Timer timer = new Timer(100, new ActionListener() {
+        Timer timer = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 z++;
@@ -44,6 +50,26 @@ public class Panel extends JPanel {
                 if(currNode!=null) {
                     currNode.setX(e.getX() - (currNode.getDiameter() / 2));
                     currNode.setY(e.getY() - (currNode.getDiameter() / 2));
+                }
+
+
+                //Detect possible snap if in area, and show preview
+                for(Node n :nodes) {
+                    if(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
+                        if(!currNode.hasParent()) {
+                            snapNode = new Node(0,n.getX()-SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
+                            snapPreviewParent = n;
+                            break;
+                        }
+                    } else if (new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
+                        if(!currNode.hasParent()) {
+                            snapNode = new Node(0,n.getX()+SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
+                            snapPreviewParent = n;
+                            break;
+                        }
+                    } else {
+                        snapNode = null;
+                    }
                 }
             }
 
@@ -74,6 +100,32 @@ public class Panel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+
+//                left example snap region
+                mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
+
+
+                //Place child on release if in correct snap area
+                for(Node n :nodes) {
+                    if(mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
+                        if(!currNode.hasParent()) {
+                            n.setLeftChild(currNode);
+                            currNode.setHasParent(true);
+                            currNode.setX(n.getX()-SNAP_OFFSET_X);
+                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
+                            snapNode = null;
+                        }
+                    } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
+                        if(!currNode.hasParent()) {
+                            n.setRightChild(currNode);
+                            currNode.setHasParent(true);
+                            currNode.setX(n.getX()+SNAP_OFFSET_X);
+                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
+                            snapNode = null;
+                        }
+                    }
+                }
+
                 mouse = new Rectangle(-999, -999, 12, 19);
                 checkDeletion();
             }
@@ -100,6 +152,12 @@ public class Panel extends JPanel {
                 RenderingHints.VALUE_ANTIALIAS_ON
         );
         g2.setRenderingHints(rh);
+
+
+        if(snapNode!=null) {
+            snapNode.drawPreviewLine(g2, snapPreviewParent);
+            snapNode.displayPreview(g2);
+        }
 
         for(Node n : nodes) {
             n.display(g2);

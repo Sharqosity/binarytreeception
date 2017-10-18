@@ -136,8 +136,7 @@ public class Panel extends JPanel {
                             n.setLeftChild(currNode);
                             currNode.setParent(n);
                             lerpNode = currNode;
-//                            currNode.setX(n.getX()-SNAP_OFFSET_X);
-//                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
+
                             snapNode = null;
                         }
                     } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
@@ -145,8 +144,7 @@ public class Panel extends JPanel {
                             n.setRightChild(currNode);
                             currNode.setParent(n);
                             lerpNode = currNode;
-//                            currNode.setX(n.getX()+SNAP_OFFSET_X);
-//                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
+
                             snapNode = null;
                         }
                     }

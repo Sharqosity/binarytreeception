@@ -16,7 +16,7 @@ public class Panel extends JPanel {
 
     Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     Rectangle mouse = new Rectangle(-999, -999, 12, 22);
-    Node currNode ;
+    Node currNode;
     Node snapNode;
     Node snapPreviewParent;
     Node lerpNode;
@@ -269,26 +269,26 @@ public class Panel extends JPanel {
 
 
     public void drawToolbar(Graphics2D g2) {
-        g2.setColor(Color.RED);
-        g2.fill(toolNode);
-        g2.setColor(Color.BLUE);
-        g2.fill(deleteNode);
-        g2.setColor(Color.BLACK);
-        g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
-        g2.setColor(Color.WHITE);
-        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
-        //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
-        g2.setColor(Color.BLACK);
-        Font currentFont = g2.getFont();
-        Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
-        g2.setFont(newFont);
-        g2.drawString(c + "", 55, 50);
-        if (c < 10) {
+         g2.setColor(Color.RED);
+         g2.fill(toolNode);
+         g2.setColor(Color.BLUE);
+         g2.fill(deleteNode);
+         g2.setColor(Color.BLACK);
+         g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
+         g2.setColor(Color.WHITE);
+         g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+         //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+         g2.setColor(Color.BLACK);
+         Font currentFont = g2.getFont();
+         Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
+         g2.setFont(newFont);
+         g2.drawString(c + "", 55, 50);
+         if (c < 10) {
             g2.drawString("." + z + "", 75, 50);
-        } else if (c < 100) {
+         } else if (c < 100) {
             g2.drawString("." + z, 95, 50);
 
-        } else
+         } else
             g2.drawString("." + z, 115, 50);
 
     }

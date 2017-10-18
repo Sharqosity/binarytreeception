@@ -24,8 +24,6 @@ public class Panel extends JPanel {
     private int c,z;
 
     private int frame = 1;
-    private Long start;
-    private int animationTime = 3000;
     private Point animationPoint = new Point();
 
 
@@ -43,21 +41,8 @@ public class Panel extends JPanel {
                     z = 0;
                     c++;
                 }
-                if(start==null) {
-                    start = System.currentTimeMillis();
-                }
-                Long elapsed = System.currentTimeMillis()-start;
-                if (elapsed >= animationTime) {
-                    elapsed = 3000L;
-//                    ((Timer) e.getSource()).stop();
-//                    lerpNode = null;
-                }
-                double i = (double) elapsed / (double) animationTime;
-
 
                 if(lerpNode!=null) {
-//                    frame = 1;
-
                     if (frame < 60) {
                         if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
                             if (lerpNode != null && snapPreviewParent != null) {
@@ -72,19 +57,18 @@ public class Panel extends JPanel {
                         }
                         frame++;
 
+                    } else {
+                        lerpNode = null;
                     }
                 } else {
                     frame = 1;
                 }
-
 
                 repaint();
             }
         });
         timer.start();
     }
-
-
 
     public void initControls() {
         addMouseMotionListener(new MouseMotionListener() {

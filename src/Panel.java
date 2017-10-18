@@ -21,7 +21,7 @@ public class Panel extends JPanel {
     Node snapPreviewParent;
     Node lerpNode;
     int defaultValue = 0;
-    private int c,z;
+    private int c, z;
 
     private int frame = 1;
     private Point animationPoint = new Point();
@@ -35,7 +35,7 @@ public class Panel extends JPanel {
 
     public Panel() {
         initControls();
-        Timer timer = new Timer(1000/60, new ActionListener() {
+        Timer timer = new Timer(1000 / 60, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //checkDeletion();
@@ -45,7 +45,7 @@ public class Panel extends JPanel {
                     c++;
                 }
 
-                if(lerpNode!=null && snapPreviewParent != null) {
+                if (lerpNode != null && snapPreviewParent != null) {
                     if (frame < 60) {
                         if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
                             if (lerpNode != null && snapPreviewParent != null) {
@@ -77,23 +77,23 @@ public class Panel extends JPanel {
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if(currNode!=null) {
+                if (currNode != null) {
                     currNode.setX(e.getX() - (currNode.getDiameter() / 2));
                     currNode.setY(e.getY() - (currNode.getDiameter() / 2));
                 }
 
                 //Detect possible snap if in area, and show preview
-                for(Node n :nodes) {
+                for (Node n : nodes) {
 
-                    if(n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
-                        if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
-                            snapNode = new Node(0,n.getX()-SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
+                    if (n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
+                        if (currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
+                            snapNode = new Node(0, n.getX() - SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
                             snapPreviewParent = n;
                             break;
                         }
-                    } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
-                        if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
-                            snapNode = new Node(0,n.getX()+SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
+                    } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
+                        if (currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
+                            snapNode = new Node(0, n.getX() + SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
                             snapPreviewParent = n;
                             break;
                         }
@@ -115,24 +115,23 @@ public class Panel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
-                if(mouse.intersects(toolNode) && nodes.size() == 0) {
+                if (mouse.intersects(toolNode) && nodes.size() == 0) {
                     level();
                     currNode = nodes.get(nodes.size() - 1);
                     buttonName = "Next Level";
 //                    x*=2;
 
-                }
-                else if(mouse.intersects(toolNode) && nodes.size() != 0) {
+                } else if (mouse.intersects(toolNode) && nodes.size() != 0) {
                     nodes.clear();
-                    x*=2;
+                    x *= 2;
                     level();
 
 
                 }
-                if(mouse.intersects(deleteNode)){
-                    if(gotHead() != null) {
+                if (mouse.intersects(deleteNode)) {
+                    if (gotHead() != null) {
                         System.out.println(gotHead().getValue());
-                    }else{
+                    } else {
                         System.out.println("null");
                     }
                 }
@@ -141,8 +140,8 @@ public class Panel extends JPanel {
 //                    x*=2;
 //                    level();
 //                }
-                for(Node n : nodes) {
-                    if(mouse.intersects(new Rectangle(n.getX(), n.getY(), n.getDiameter(), n.getDiameter()))) {
+                for (Node n : nodes) {
+                    if (mouse.intersects(new Rectangle(n.getX(), n.getY(), n.getDiameter(), n.getDiameter()))) {
                         currNode = n;
                         break;
                     }
@@ -155,17 +154,17 @@ public class Panel extends JPanel {
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
 
                 //Place child on release if in correct snap area
-                for(Node n :nodes) {
-                    if(mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
-                        if(currNode.hasParent() == null && n.getLeftChild() == null) {
+                for (Node n : nodes) {
+                    if (mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y))) {
+                        if (currNode.hasParent() == null && n.getLeftChild() == null) {
                             n.setLeftChild(currNode);
                             currNode.setParent(n);
                             lerpNode = currNode;
 
                             snapNode = null;
                         }
-                    } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
-                        if(currNode.hasParent() == null && n.getRightChild() == null) {
+                    } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y))) {
+                        if (currNode.hasParent() == null && n.getRightChild() == null) {
                             n.setRightChild(currNode);
                             currNode.setParent(n);
                             lerpNode = currNode;
@@ -191,27 +190,27 @@ public class Panel extends JPanel {
         });
     }
 
-    public Node gotHead(){
+    public Node gotHead() {
         ArrayList<Node> heads = new ArrayList<>();
 
         for (int i = 0; i < nodes.size(); i++) {
-            if(nodes.get(i).hasParent() == null){
+            if (nodes.get(i).hasParent() == null) {
                 heads.add(nodes.get(i));
             }
 
         }
-        if(heads.size() == 1){
-           return heads.get(0);
-        } else{
+        if (heads.size() == 1) {
+            return heads.get(0);
+        } else {
             return null;
         }
     }
 
-    public void level(){
-        int x1 = (int)(Math.random()*(getWidth()-100));
-        int y1 = (int)(Math.random()*(getHeight()-100));
+    public void level() {
+        int x1 = (int) (Math.random() * (getWidth() - 100));
+        int y1 = (int) (Math.random() * (getHeight() - 100));
         for (int i = 0; i < x; i++) {
-            nodes.add(new Node(defaultValue, (int)(Math.random()*(getWidth()-100)), (int)(Math.random()*(getHeight()-100)), null, null));
+            nodes.add(new Node(defaultValue, (int) (Math.random() * (getWidth() - 100)), (int) (Math.random() * (getHeight() - 100)), null, null));
             //currNode = nodes.get(nodes.size() - 1);
             defaultValue = (int) (Math.random() * 50);
         }
@@ -241,16 +240,16 @@ public class Panel extends JPanel {
         g2.setRenderingHints(rh);
 
 
-        if(snapNode!=null) {
+        if (snapNode != null) {
             snapNode.drawPreviewLine(g2, snapPreviewParent);
             snapNode.displayPreview(g2);
         }
-        if(lerpNode!=null) {
+        if (lerpNode != null) {
             lerpNode.setX(animationPoint.x);
             lerpNode.setY(animationPoint.y);
 //            lerpNode.display(g2);
         }
-        for(Node n : nodes) {
+        for (Node n : nodes) {
             n.display(g2);
         }
 
@@ -266,29 +265,27 @@ public class Panel extends JPanel {
 //    }
 
 
-
-
     public void drawToolbar(Graphics2D g2) {
-         g2.setColor(Color.RED);
-         g2.fill(toolNode);
-         g2.setColor(Color.BLUE);
-         g2.fill(deleteNode);
-         g2.setColor(Color.BLACK);
-         g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
-         g2.setColor(Color.WHITE);
-         g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
-         //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
-         g2.setColor(Color.BLACK);
-         Font currentFont = g2.getFont();
-         Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
-         g2.setFont(newFont);
-         g2.drawString(c + "", 55, 50);
-         if (c < 10) {
+        g2.setColor(Color.RED);
+        g2.fill(toolNode);
+        g2.setColor(Color.BLUE);
+        g2.fill(deleteNode);
+        g2.setColor(Color.BLACK);
+        g2.drawString(buttonName, (int) (toolNode.getX() + 20), (int) (toolNode.getY() + 55));
+        g2.setColor(Color.WHITE);
+        g2.drawString("Check", (int) (deleteNode.getX() + 30), (int) (deleteNode.getY() + 55));
+        //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+        g2.setColor(Color.BLACK);
+        Font currentFont = g2.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
+        g2.setFont(newFont);
+        g2.drawString(c + "", 55, 50);
+        if (c < 10) {
             g2.drawString("." + z + "", 75, 50);
-         } else if (c < 100) {
+        } else if (c < 100) {
             g2.drawString("." + z, 95, 50);
 
-         } else
+        } else
             g2.drawString("." + z, 115, 50);
 
     }

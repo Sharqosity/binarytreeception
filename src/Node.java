@@ -71,8 +71,7 @@ public class Node {
 
     }
 
-
-    public void display(Graphics2D g2) {
+    public void drawLine(Graphics2D g2) {
         if(leftChild!=null) {
             g2.setStroke(new BasicStroke(10));
             g2.setColor(Color.RED);
@@ -83,6 +82,10 @@ public class Node {
             g2.setColor(Color.RED);
             g2.drawLine(x + diameter / 2, y + diameter / 2, rightChild.x + diameter / 2, rightChild.y + diameter / 2);
         }
+    }
+
+    public void display(Graphics2D g2) {
+
         g2.setStroke(new BasicStroke(1));
 
         g2.setColor(Color.BLACK);

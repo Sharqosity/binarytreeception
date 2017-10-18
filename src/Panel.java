@@ -11,24 +11,24 @@ import java.util.ArrayList;
 
 public class Panel extends JPanel {
 
-    static ArrayList<Node> nodes = new ArrayList<>();
-    Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
+    private static ArrayList<Node> nodes = new ArrayList<>();
+    private Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
 
-    Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
-    Rectangle mouse = new Rectangle(-999, -999, 12, 22);
-    Node currNode;
-    Node snapNode;
-    Node snapPreviewParent;
-    Node lerpNode;
-    int defaultValue = 0;
+    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
+    private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
+    private Node currNode;
+    private Node snapNode;
+    private Node snapPreviewParent;
+    private Node lerpNode;
+    private int defaultValue = 0;
     private int c,z;
 
     private int frame = 1;
     private Point animationPoint = new Point();
 
 
-    final int SNAP_OFFSET_X = 100;
-    final int SNAP_OFFSET_Y = 100;
+    private final int SNAP_OFFSET_X = 100;
+    private final int SNAP_OFFSET_Y = 100;
 
     private int x = 3;
     private String buttonName = "Play";
@@ -250,6 +250,10 @@ public class Panel extends JPanel {
             lerpNode.setY(animationPoint.y);
 //            lerpNode.display(g2);
         }
+        for(Node n : nodes) {
+            n.drawLine(g2);
+        }
+
         for(Node n : nodes) {
             n.display(g2);
         }

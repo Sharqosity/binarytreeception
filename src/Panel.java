@@ -81,13 +81,14 @@ public class Panel extends JPanel {
 
                 //Detect possible snap if in area, and show preview
                 for(Node n :nodes) {
-                    if(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
+
+                    if(n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
                         if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
                             snapNode = new Node(0,n.getX()-SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
                             snapPreviewParent = n;
                             break;
                         }
-                    } else if (new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
+                    } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
                         if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
                             snapNode = new Node(0,n.getX()+SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
                             snapPreviewParent = n;
@@ -131,7 +132,7 @@ public class Panel extends JPanel {
                 //Place child on release if in correct snap area
                 for(Node n :nodes) {
                     if(mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
-                        if(currNode.hasParent() == null) {
+                        if(currNode.hasParent() == null && n.getLeftChild() == null) {
                             n.setLeftChild(currNode);
                             currNode.setParent(n);
                             lerpNode = currNode;
@@ -140,7 +141,7 @@ public class Panel extends JPanel {
                             snapNode = null;
                         }
                     } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
-                        if(currNode.hasParent() == null) {
+                        if(currNode.hasParent() == null && n.getRightChild() == null) {
                             n.setRightChild(currNode);
                             currNode.setParent(n);
                             lerpNode = currNode;

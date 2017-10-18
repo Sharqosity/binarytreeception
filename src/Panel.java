@@ -19,8 +19,15 @@ public class Panel extends JPanel {
     Node currNode;
     Node snapNode;
     Node snapPreviewParent;
+    Node lerpNode;
     int defaultValue = 0;
     private int c,z;
+
+    private int frame = 1;
+    private Long start;
+    private int animationTime = 3000;
+    private Point animationPoint = new Point();
+
 
     final int SNAP_OFFSET_X = 100;
     final int SNAP_OFFSET_Y = 100;
@@ -28,7 +35,7 @@ public class Panel extends JPanel {
 
     public Panel() {
         initControls();
-        Timer timer = new Timer(16, new ActionListener() {
+        Timer timer = new Timer(1000/60, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 z++;
@@ -36,12 +43,48 @@ public class Panel extends JPanel {
                     z = 0;
                     c++;
                 }
+                if(start==null) {
+                    start = System.currentTimeMillis();
+                }
+                Long elapsed = System.currentTimeMillis()-start;
+                if (elapsed >= animationTime) {
+                    elapsed = 3000L;
+//                    ((Timer) e.getSource()).stop();
+//                    lerpNode = null;
+                }
+                double i = (double) elapsed / (double) animationTime;
+
+
+                if(lerpNode!=null) {
+//                    frame = 1;
+
+                    if (frame < 60) {
+                        if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
+                            if (lerpNode != null && snapPreviewParent != null) {
+                                animationPoint.x = (lerpNode.getX() + ((snapPreviewParent.getX() - SNAP_OFFSET_X - lerpNode.getX()) * frame / 60));
+                                animationPoint.y = (lerpNode.getY() + ((snapPreviewParent.getY() + SNAP_OFFSET_Y - lerpNode.getY()) * frame / 60));
+                            }
+                        } else if (snapPreviewParent.getRightChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() + SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
+                            if (lerpNode != null && snapPreviewParent != null) {
+                                animationPoint.x = (lerpNode.getX() + ((snapPreviewParent.getX() + SNAP_OFFSET_X - lerpNode.getX()) * frame / 60));
+                                animationPoint.y = (lerpNode.getY() + ((snapPreviewParent.getY() + SNAP_OFFSET_Y - lerpNode.getY()) * frame / 60));
+                            }
+                        }
+                        frame++;
+
+                    }
+                } else {
+                    frame = 1;
+                }
+
 
                 repaint();
             }
         });
         timer.start();
     }
+
+
 
     public void initControls() {
         addMouseMotionListener(new MouseMotionListener() {
@@ -52,17 +95,16 @@ public class Panel extends JPanel {
                     currNode.setY(e.getY() - (currNode.getDiameter() / 2));
                 }
 
-
                 //Detect possible snap if in area, and show preview
                 for(Node n :nodes) {
-                    if(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
-                        if(!currNode.hasParent()) {
+                    if(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
+                        if(!currNode.hasParent() && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
                             snapNode = new Node(0,n.getX()-SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
                             snapPreviewParent = n;
                             break;
                         }
-                    } else if (new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
-                        if(!currNode.hasParent()) {
+                    } else if (new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
+                        if(!currNode.hasParent() && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
                             snapNode = new Node(0,n.getX()+SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
                             snapPreviewParent = n;
                             break;
@@ -100,10 +142,7 @@ public class Panel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-
-//                left example snap region
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
-
 
                 //Place child on release if in correct snap area
                 for(Node n :nodes) {
@@ -111,16 +150,18 @@ public class Panel extends JPanel {
                         if(!currNode.hasParent()) {
                             n.setLeftChild(currNode);
                             currNode.setHasParent(true);
-                            currNode.setX(n.getX()-SNAP_OFFSET_X);
-                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
+                            lerpNode = currNode;
+//                            currNode.setX(n.getX()-SNAP_OFFSET_X);
+//                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
                             snapNode = null;
                         }
                     } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
                         if(!currNode.hasParent()) {
                             n.setRightChild(currNode);
                             currNode.setHasParent(true);
-                            currNode.setX(n.getX()+SNAP_OFFSET_X);
-                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
+                            lerpNode = currNode;
+//                            currNode.setX(n.getX()+SNAP_OFFSET_X);
+//                            currNode.setY(n.getY()+SNAP_OFFSET_Y);
                             snapNode = null;
                         }
                     }
@@ -158,10 +199,15 @@ public class Panel extends JPanel {
             snapNode.drawPreviewLine(g2, snapPreviewParent);
             snapNode.displayPreview(g2);
         }
-
+        if(lerpNode!=null) {
+            lerpNode.setX(animationPoint.x);
+            lerpNode.setY(animationPoint.y);
+//            lerpNode.display(g2);
+        }
         for(Node n : nodes) {
             n.display(g2);
         }
+
         drawToolbar(g2);
     }
 

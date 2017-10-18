@@ -30,19 +30,22 @@ public class Panel extends JPanel {
     final int SNAP_OFFSET_X = 100;
     final int SNAP_OFFSET_Y = 100;
 
+    private int x = 3;
+    private String buttonName = "Play";
 
     public Panel() {
         initControls();
         Timer timer = new Timer(1000/60, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //checkDeletion();
                 z++;
                 if (z % 10 == 0) {
                     z = 0;
                     c++;
                 }
 
-                if(lerpNode!=null) {
+                if(lerpNode!=null && snapPreviewParent != null) {
                     if (frame < 60) {
                         if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
                             if (lerpNode != null && snapPreviewParent != null) {
@@ -111,11 +114,32 @@ public class Panel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
-                if(mouse.intersects(toolNode)) {
-                    nodes.add(new Node(defaultValue, e.getX() - 50, e.getY() - 50, null, null));
+                if(mouse.intersects(toolNode) && nodes.size() == 0) {
+                    level();
                     currNode = nodes.get(nodes.size() - 1);
-                    defaultValue = (int)(Math.random() * 50);
+                    buttonName = "Next Level";
+//                    x*=2;
+
                 }
+                else if(mouse.intersects(toolNode) && nodes.size() != 0) {
+                    nodes.clear();
+                    x*=2;
+                    level();
+
+
+                }
+                if(mouse.intersects(deleteNode)){
+                    if(gotHead() != null) {
+                        System.out.println(gotHead().getValue());
+                    }else{
+                        System.out.println("null");
+                    }
+                }
+//                if(mouse.intersects(deleteNode)){
+//                    nodes.clear();
+//                    x*=2;
+//                    level();
+//                }
                 for(Node n : nodes) {
                     if(mouse.intersects(new Rectangle(n.getX(), n.getY(), n.getDiameter(), n.getDiameter()))) {
                         currNode = n;
@@ -152,7 +176,7 @@ public class Panel extends JPanel {
                 }
 
                 mouse = new Rectangle(-999, -999, 12, 19);
-                checkDeletion();
+                //checkDeletion();
             }
 
             @Override
@@ -166,6 +190,44 @@ public class Panel extends JPanel {
             }
         });
     }
+
+    public Node gotHead(){
+        ArrayList<Node> heads = new ArrayList<>();
+
+        for (int i = 0; i < nodes.size(); i++) {
+            if(nodes.get(i).hasParent() == null){
+                heads.add(nodes.get(i));
+            }
+
+        }
+        if(heads.size() == 1){
+           return heads.get(0);
+        } else{
+            return null;
+        }
+    }
+
+    public void level(){
+        int x1 = (int)(Math.random()*(getWidth()-100));
+        int y1 = (int)(Math.random()*(getHeight()-100));
+        for (int i = 0; i < x; i++) {
+            nodes.add(new Node(defaultValue, (int)(Math.random()*(getWidth()-100)), (int)(Math.random()*(getHeight()-100)), null, null));
+            //currNode = nodes.get(nodes.size() - 1);
+            defaultValue = (int) (Math.random() * 50);
+        }
+
+    }
+
+//    public void levelTwo(){
+//
+//        for (int i = 0; i < 6; i++) {
+//            nodes.add(new Node(defaultValue, getWidth() / 2, getHeight() / 2, null, null));
+//            currNode = nodes.get(nodes.size() - 1);
+//            defaultValue = (int) (Math.random() * 50);
+//        }
+//
+//    }
+
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -195,17 +257,16 @@ public class Panel extends JPanel {
         drawToolbar(g2);
     }
 
-    public void checkDeletion() {
-        if(currNode != null) {
-            if (deleteNode.contains(currNode.getX() + currNode.getDiameter()/2, currNode.getY() + currNode.getDiameter()/2)) {
-                nodes.remove(currNode);
-                currNode = null;
-            }
+//    public void checkDeletion() {
+//        if(currNode != null) {
 //            if (new Rectangle(currNode.getX(), currNode.getY(), currNode.getDiameter(), currNode.getDiameter()).intersects(deleteNode)) {
 //                nodes.remove(currNode);
 //            }
-        }
-    }
+//        }
+//    }
+
+
+
 
     public void drawToolbar(Graphics2D g2) {
         g2.setColor(Color.RED);
@@ -213,9 +274,10 @@ public class Panel extends JPanel {
         g2.setColor(Color.BLUE);
         g2.fill(deleteNode);
         g2.setColor(Color.BLACK);
-        g2.drawString("New Node", (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
+        g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
         g2.setColor(Color.WHITE);
-        g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+        //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
         g2.setColor(Color.BLACK);
         Font currentFont = g2.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);

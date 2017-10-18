@@ -1,18 +1,25 @@
 import java.awt.*;
 
+/**
+ * Created by student on 10/13/17.
+ */
 public class Node {
     private int value;
     private Node leftChild, rightChild;
+    //Point position;
     private int x, y;
     private int diameter = 100;
     private Node hasParent;
 
     public Node(int value, int x, int y, Node leftChild, Node rightChild) {
+
         this.value = value;
         this.x = x;
         this.y = y;
         this.leftChild = leftChild;
         this.rightChild = rightChild;
+        //this.position = position;
+
     }
 
     public Node(int value){
@@ -95,6 +102,11 @@ public class Node {
     public Node getRightChild() {
         return rightChild;
     }
+
+//    public int getPosition(){return position;}
+//
+//    public void setPosition(int newPosition){this.position = newPosition;}
+
 
     public void setValue(int value) {
         this.value = value;

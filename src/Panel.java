@@ -16,7 +16,7 @@ public class Panel extends JPanel {
 
     Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     Rectangle mouse = new Rectangle(-999, -999, 12, 22);
-    Node currNode;
+    Node currNode ;
     Node snapNode;
     Node snapPreviewParent;
     Node lerpNode;

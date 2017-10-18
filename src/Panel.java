@@ -148,6 +148,7 @@ public class Panel extends JPanel {
                     }
                 }
             }
+            //nice
 
             @Override
             public void mouseReleased(MouseEvent e) {

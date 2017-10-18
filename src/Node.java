@@ -5,7 +5,7 @@ public class Node {
     private Node leftChild, rightChild;
     private int x, y;
     private int diameter = 100;
-    private boolean hasParent = false;
+    private Node hasParent;
 
     public Node(int value, int x, int y, Node leftChild, Node rightChild) {
         this.value = value;
@@ -128,12 +128,12 @@ public class Node {
         return diameter;
     }
 
-    public boolean hasParent() {
+    public Node hasParent() {
         return hasParent;
     }
 
-    public void setHasParent(boolean bool) {
-        hasParent = bool;
+    public void setParent(Node parent) {
+        hasParent = parent;
     }
 }
 

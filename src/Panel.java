@@ -14,7 +14,9 @@ public class Panel extends JPanel {
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     private Node currNode,snapNode,snapPreviewParent,lerpNode;
 
-    private int defaultValue = (int)(Math.random() * 100);
+    private int defaultValue;
+    private int range =  (int)(Math.random() * 250);
+
     private int c,z;
 
     private int frame = 1;
@@ -31,7 +33,6 @@ public class Panel extends JPanel {
     public Panel() {
         initControls();
         Timer timer = new Timer(1000/FRAMES_PER_SECOND, e -> {
-            //checkDeletion();
             z++;
             if (z % FRAMES_PER_SECOND == 0) {
                 z = 0;
@@ -109,10 +110,13 @@ public class Panel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
                 if(mouse.intersects(toolNode) && nodes.size() == 0) {
+                    range = (int)(Math.random() * 250);
+                    while(range < 50) {
+                        range = (int)(Math.random() * 250);
+                    }
                     level();
                     currNode = nodes.get(nodes.size() - 1);
                     buttonName = "Next Level";
-//                    x*=2;
 
                 }
                 else if(mouse.intersects(toolNode) && nodes.size() != 0) {
@@ -123,11 +127,7 @@ public class Panel extends JPanel {
 
                 }
                 if(mouse.intersects(deleteNode)){
-                    if(gotHead() != null) {
-                        System.out.println(gotHead().getValue());
-                    }else{
-                        System.out.println("null");
-                    }
+                    System.out.println(startValidation());
                 }
 //                if(mouse.intersects(deleteNode)){
 //                    nodes.clear();
@@ -152,7 +152,7 @@ public class Panel extends JPanel {
                 for(Node n :nodes) {
                     if (n != currNode) {
                         if (mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y))) {
-                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getLeftChild() == null) {
+                            if (currNode != null && currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getLeftChild() == null) {
                                 n.setLeftChild(currNode);
                                 currNode.setParent(n);
                                 lerpNode = currNode;
@@ -161,7 +161,7 @@ public class Panel extends JPanel {
                                 break;
                             }
                         } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y))) {
-                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getRightChild() == null) {
+                            if (currNode != null && currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getRightChild() == null) {
                                 n.setRightChild(currNode);
                                 currNode.setParent(n);
                                 lerpNode = currNode;
@@ -208,7 +208,7 @@ public class Panel extends JPanel {
         });
     }
 
-    public Node gotHead(){
+    public Node gotHead() {
         ArrayList<Node> heads = new ArrayList<>();
 
         for (int i = 0; i < nodes.size(); i++) {
@@ -226,7 +226,7 @@ public class Panel extends JPanel {
 
     public void level(){
         for (int i = 0; i < x; i++) {
-            defaultValue = (int)(Math.random() * 100);
+            defaultValue = (int)(Math.random() * range);
             for(int j = 0; j < nodes.size(); j++) {
                 if(defaultValue == nodes.get(j).getValue()) {
                     defaultValue = (int)(Math.random() * 100);
@@ -236,7 +236,18 @@ public class Panel extends JPanel {
             nodes.add(new Node(defaultValue, (int)(Math.random()*(getWidth()-200)), (int)(Math.random()*(getHeight()-100)), null, null));
             currNode = null;
         }
+    }
 
+    public boolean startValidation() {
+        System.out.println(gotHead().getValue());
+        return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    public boolean validateTree(Node n, int low, int high) {
+        if(n == null) {
+            return true;
+        }
+        return n.getValue() > low && n.getValue() < high && validateTree(n.getLeftChild(), low, n.getValue()) && validateTree(n.getRightChild(), n.getValue(), high);
     }
 
 
@@ -302,7 +313,6 @@ public class Panel extends JPanel {
             g2.drawString("." + z + "", 75, 50);
         } else if (c < 100) {
             g2.drawString("." + z, 95, 50);
-
         } else
             g2.drawString("." + z, 115, 50);
 

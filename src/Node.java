@@ -9,7 +9,7 @@ public class Node {
     //Point position;
     private int x, y;
     private int diameter = 100;
-    private Node hasParent;
+    private Node parent;
 
     public Node(int value, int x, int y, Node leftChild, Node rightChild) {
 
@@ -54,6 +54,30 @@ public class Node {
         }
     }
 
+
+    //checks if input node is above this node in the tree
+    public boolean isDescendantOf(Node check) {
+        if(this == check) {
+            return true;
+        }
+        if (parent == null) {
+            return false;
+        } else {
+            return parent == check || parent.isDescendantOf(check);
+        }
+    }
+
+    public boolean isAncestorOf(Node check) {
+
+        if(this == check) {
+            return true;
+        } else if(leftChild ==null && rightChild == null) {
+            return false;
+        } else {
+            return leftChild != null && leftChild.isAncestorOf(check) || rightChild != null && rightChild.isAncestorOf(check);
+        }
+
+    }
 
     public void drawPreviewLine(Graphics2D g2, Node parent) {
         g2.setStroke(new BasicStroke(5));
@@ -143,12 +167,12 @@ public class Node {
         return diameter;
     }
 
-    public Node hasParent() {
-        return hasParent;
+    public Node getParent() {
+        return parent;
     }
 
     public void setParent(Node parent) {
-        hasParent = parent;
+        this.parent = parent;
     }
 }
 

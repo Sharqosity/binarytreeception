@@ -16,10 +16,8 @@ public class Panel extends JPanel {
 
     private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
-    private Node currNode;
-    private Node snapNode;
-    private Node snapPreviewParent;
-    private Node lerpNode;
+    private Node currNode,snapNode,snapPreviewParent,lerpNode;
+
     private int defaultValue = 0;
     private int c,z;
 
@@ -27,6 +25,7 @@ public class Panel extends JPanel {
     private Point animationPoint = new Point();
 
 
+    private final int FRAMES_PER_SECOND = 60;
     private final int SNAP_OFFSET_X = 100;
     private final int SNAP_OFFSET_Y = 100;
 
@@ -35,40 +34,37 @@ public class Panel extends JPanel {
 
     public Panel() {
         initControls();
-        Timer timer = new Timer(1000/60, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //checkDeletion();
-                z++;
-                if (z % 10 == 0) {
-                    z = 0;
-                    c++;
-                }
-
-                if (lerpNode != null && snapPreviewParent != null) {
-                    if (frame < 60) {
-                        if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
-                            if (lerpNode != null && snapPreviewParent != null) {
-                                animationPoint.x = (lerpNode.getX() + ((snapPreviewParent.getX() - SNAP_OFFSET_X - lerpNode.getX()) * frame / 60));
-                                animationPoint.y = (lerpNode.getY() + ((snapPreviewParent.getY() + SNAP_OFFSET_Y - lerpNode.getY()) * frame / 60));
-                            }
-                        } else if (snapPreviewParent.getRightChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() + SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
-                            if (lerpNode != null && snapPreviewParent != null) {
-                                animationPoint.x = (lerpNode.getX() + ((snapPreviewParent.getX() + SNAP_OFFSET_X - lerpNode.getX()) * frame / 60));
-                                animationPoint.y = (lerpNode.getY() + ((snapPreviewParent.getY() + SNAP_OFFSET_Y - lerpNode.getY()) * frame / 60));
-                            }
-                        }
-                        frame++;
-
-                    } else {
-                        lerpNode = null;
-                    }
-                } else {
-                    frame = 1;
-                }
-
-                repaint();
+        Timer timer = new Timer(1000/FRAMES_PER_SECOND, e -> {
+            //checkDeletion();
+            z++;
+            if (z % FRAMES_PER_SECOND == 0) {
+                z = 0;
+                c++;
             }
+
+            if (lerpNode != null && snapPreviewParent != null) {
+                if (frame < 60) {
+                    if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
+                        if (lerpNode != null && snapPreviewParent != null) {
+                            animationPoint.x = (lerpNode.getX() + ((snapPreviewParent.getX() - SNAP_OFFSET_X - lerpNode.getX()) * frame / 60));
+                            animationPoint.y = (lerpNode.getY() + ((snapPreviewParent.getY() + SNAP_OFFSET_Y - lerpNode.getY()) * frame / 60));
+                        }
+                    } else if (snapPreviewParent.getRightChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() + SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
+                        if (lerpNode != null && snapPreviewParent != null) {
+                            animationPoint.x = (lerpNode.getX() + ((snapPreviewParent.getX() + SNAP_OFFSET_X - lerpNode.getX()) * frame / 60));
+                            animationPoint.y = (lerpNode.getY() + ((snapPreviewParent.getY() + SNAP_OFFSET_Y - lerpNode.getY()) * frame / 60));
+                        }
+                    }
+                    frame++;
+
+                } else {
+                    lerpNode = null;
+                }
+            } else {
+                frame = 1;
+            }
+
+            repaint();
         });
         timer.start();
     }
@@ -83,22 +79,23 @@ public class Panel extends JPanel {
                 }
 
                 //Detect possible snap if in area, and show preview
-                for (Node n : nodes) {
-
-                    if(n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
-                        if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
-                            snapNode = new Node(0,n.getX()-SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
-                            snapPreviewParent = n;
-                            break;
+                for(Node n :nodes) {
+                    if (n != currNode) {
+                        if (n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
+                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
+                                snapNode = new Node(0, n.getX() - SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
+                                snapPreviewParent = n;
+                                break;
+                            }
+                        } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
+                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
+                                snapNode = new Node(0, n.getX() + SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
+                                snapPreviewParent = n;
+                                break;
+                            }
+                        } else {
+                            snapNode = null;
                         }
-                    } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
-                        if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
-                            snapNode = new Node(0,n.getX()+SNAP_OFFSET_Y,n.getY()+SNAP_OFFSET_Y,null,null);
-                            snapPreviewParent = n;
-                            break;
-                        }
-                    } else {
-                        snapNode = null;
                     }
                 }
             }
@@ -148,7 +145,8 @@ public class Panel extends JPanel {
                     }
                 }
             }
-            //nice
+
+
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -156,21 +154,25 @@ public class Panel extends JPanel {
 
                 //Place child on release if in correct snap area
                 for(Node n :nodes) {
-                    if(mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
-                        if(currNode.hasParent() == null && n.getLeftChild() == null) {
-                            n.setLeftChild(currNode);
-                            currNode.setParent(n);
-                            lerpNode = currNode;
+                    if (n != currNode) {
+                        if (mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y))) {
+                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getLeftChild() == null) {
+                                n.setLeftChild(currNode);
+                                currNode.setParent(n);
+                                lerpNode = currNode;
 
-                            snapNode = null;
-                        }
-                    } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y,n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y))) {
-                        if(currNode.hasParent() == null && n.getRightChild() == null) {
-                            n.setRightChild(currNode);
-                            currNode.setParent(n);
-                            lerpNode = currNode;
+                                snapNode = null;
+                                break;
+                            }
+                        } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y))) {
+                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getRightChild() == null) {
+                                n.setRightChild(currNode);
+                                currNode.setParent(n);
+                                lerpNode = currNode;
 
-                            snapNode = null;
+                                snapNode = null;
+                                break;
+                            }
                         }
                     }
                 }
@@ -195,7 +197,7 @@ public class Panel extends JPanel {
         ArrayList<Node> heads = new ArrayList<>();
 
         for (int i = 0; i < nodes.size(); i++) {
-            if(nodes.get(i).hasParent() == null){
+            if(nodes.get(i).getParent() == null){
                 heads.add(nodes.get(i));
             }
 

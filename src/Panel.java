@@ -45,7 +45,7 @@ public class Panel extends JPanel {
                     c++;
                 }
 
-                if(lerpNode!=null && snapPreviewParent != null) {
+                if (lerpNode != null && snapPreviewParent != null) {
                     if (frame < 60) {
                         if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
                             if (lerpNode != null && snapPreviewParent != null) {
@@ -77,13 +77,13 @@ public class Panel extends JPanel {
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if(currNode!=null) {
+                if (currNode != null) {
                     currNode.setX(e.getX() - (currNode.getDiameter() / 2));
                     currNode.setY(e.getY() - (currNode.getDiameter() / 2));
                 }
 
                 //Detect possible snap if in area, and show preview
-                for(Node n :nodes) {
+                for (Node n : nodes) {
 
                     if(n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter()+SNAP_OFFSET_X, n.getDiameter()+SNAP_OFFSET_Y).contains(e.getX(),e.getY())) {
                         if(currNode.hasParent() == null && currNode.getLeftChild() != n && currNode.getRightChild() != n) {

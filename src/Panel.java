@@ -3,6 +3,7 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Panel extends JPanel {
@@ -16,8 +17,10 @@ public class Panel extends JPanel {
 
     private int defaultValue = (int)(Math.random() * 100);
     private int c,z;
+    private double total;
 
     private int frame = 1;
+
     private Point animationPoint = new Point();
 
 
@@ -112,6 +115,8 @@ public class Panel extends JPanel {
                     level();
                     currNode = nodes.get(nodes.size() - 1);
                     buttonName = "Next Level";
+                    z = 0;
+                    c = 0;
 //                    x*=2;
 
                 }
@@ -119,6 +124,18 @@ public class Panel extends JPanel {
                     nodes.clear();
                     x*=2;
                     level();
+                    total += c + (z/100.0);
+                    z = 0;
+                    c = 0;
+                    if(total<10) {
+                        new DecimalFormat("#.##").format(total);
+                    }else if(total <100){
+                        new DecimalFormat("##.##").format(total);
+                    }else{
+                        new DecimalFormat("###.##").format(total);
+                    }
+                   System.out.println(total);
+
 
 
                 }

@@ -3,10 +3,6 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Panel extends JPanel {
@@ -18,7 +14,7 @@ public class Panel extends JPanel {
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     private Node currNode,snapNode,snapPreviewParent,lerpNode;
 
-    private int defaultValue = 0;
+    private int defaultValue = (int)(Math.random() * 100);
     private int c,z;
 
     private int frame = 1;
@@ -76,25 +72,25 @@ public class Panel extends JPanel {
                 if (currNode != null) {
                     currNode.setX(e.getX() - (currNode.getDiameter() / 2));
                     currNode.setY(e.getY() - (currNode.getDiameter() / 2));
-                }
 
-                //Detect possible snap if in area, and show preview
-                for(Node n :nodes) {
-                    if (n != currNode) {
-                        if (n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
-                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
-                                snapNode = new Node(0, n.getX() - SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
-                                snapPreviewParent = n;
-                                break;
+                    //Detect possible snap if in area, and show preview
+                    for (Node n : nodes) {
+                        if (n != currNode) {
+                            if (n.getLeftChild() == null && new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
+                                if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
+                                    snapNode = new Node(0, n.getX() - SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
+                                    snapPreviewParent = n;
+                                    break;
+                                }
+                            } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
+                                if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
+                                    snapNode = new Node(0, n.getX() + SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
+                                    snapPreviewParent = n;
+                                    break;
+                                }
+                            } else {
+                                snapNode = null;
                             }
-                        } else if (n.getRightChild() == null && new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter() + SNAP_OFFSET_X, n.getDiameter() + SNAP_OFFSET_Y).contains(e.getX(), e.getY())) {
-                            if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
-                                snapNode = new Node(0, n.getX() + SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
-                                snapPreviewParent = n;
-                                break;
-                            }
-                        } else {
-                            snapNode = null;
                         }
                     }
                 }
@@ -178,7 +174,7 @@ public class Panel extends JPanel {
                 }
 
                 mouse = new Rectangle(-999, -999, 12, 19);
-                //checkDeletion();
+                currNode = null;
             }
 
             @Override
@@ -188,6 +184,25 @@ public class Panel extends JPanel {
 
             @Override
             public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
 
             }
         });
@@ -210,25 +225,19 @@ public class Panel extends JPanel {
     }
 
     public void level(){
-        int x1 = (int)(Math.random()*(getWidth()-100));
-        int y1 = (int)(Math.random()*(getHeight()-100));
         for (int i = 0; i < x; i++) {
-            nodes.add(new Node(defaultValue, (int)(Math.random()*(getWidth()-100)), (int)(Math.random()*(getHeight()-100)), null, null));
-            //currNode = nodes.get(nodes.size() - 1);
-            defaultValue = (int) (Math.random() * 50);
+            defaultValue = (int)(Math.random() * 100);
+            for(int j = 0; j < nodes.size(); j++) {
+                if(defaultValue == nodes.get(j).getValue()) {
+                    defaultValue = (int)(Math.random() * 100);
+                    j = 0;
+                }
+            }
+            nodes.add(new Node(defaultValue, (int)(Math.random()*(getWidth()-200)), (int)(Math.random()*(getHeight()-100)), null, null));
+            currNode = null;
         }
 
     }
-
-//    public void levelTwo(){
-//
-//        for (int i = 0; i < 6; i++) {
-//            nodes.add(new Node(defaultValue, getWidth() / 2, getHeight() / 2, null, null));
-//            currNode = nodes.get(nodes.size() - 1);
-//            defaultValue = (int) (Math.random() * 50);
-//        }
-//
-//    }
 
 
     public void paintComponent(Graphics g) {

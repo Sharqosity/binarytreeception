@@ -106,13 +106,15 @@ public class Node {
     }
 
     public void display(Graphics2D g2) {
-
         g2.setStroke(new BasicStroke(1));
-
         g2.setColor(Color.BLACK);
         g2.fillOval(x-diameter/2, y-diameter/2, diameter, diameter);
         g2.setColor(Color.WHITE);
-        g2.drawString("" + value, x + 45-diameter/2, y + 55-diameter/2);
+        if(value < 100) { //value is 2 digits
+            g2.drawString("" + value, x - 7, y + 5);
+        } else { //value is 3 digits, draw more to the left
+            g2.drawString("" + value, x - 10, y + 5);
+        }
     }
 
     public int getValue() {
@@ -126,11 +128,6 @@ public class Node {
     public Node getRightChild() {
         return rightChild;
     }
-
-//    public int getPosition(){return position;}
-//
-//    public void setPosition(int newPosition){this.position = newPosition;}
-
 
     public void setValue(int value) {
         this.value = value;

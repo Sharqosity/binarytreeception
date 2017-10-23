@@ -310,8 +310,6 @@ public class Panel extends JPanel {
 //    }
 
 
-
-
     public void drawToolbar(Graphics2D g2) {
         g2.setColor(Color.RED);
         g2.fill(toolNode);

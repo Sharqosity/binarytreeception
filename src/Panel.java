@@ -1,5 +1,3 @@
-import javafx.scene.layout.Pane;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +9,7 @@ public class Panel extends JPanel {
     private static ArrayList<Node> nodes = new ArrayList<>();
     private Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
 
-    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
+//    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     private Node currNode,snapNode,snapPreviewParent,lerpNode;
 
@@ -22,7 +20,7 @@ public class Panel extends JPanel {
     private double total;
 
     private int score = 0;
-    private int timeBonus, balanceBonus;
+    private int levelBonus, timeBonus, balanceBonus;
 
     //snap animation stuff
     private int lerpFrame = 1;
@@ -48,7 +46,7 @@ public class Panel extends JPanel {
 
             }
 
-
+            //animation calculation
             if (lerpNode != null && snapPreviewParent != null) {
                 if (lerpFrame < FRAMES_PER_SECOND) {
                     if (snapPreviewParent.getLeftChild() == lerpNode && !(lerpNode.getX() == snapPreviewParent.getX() - SNAP_OFFSET_X && lerpNode.getY() + SNAP_OFFSET_Y == snapPreviewParent.getY())) {
@@ -88,14 +86,12 @@ public class Panel extends JPanel {
                     for (Node n : nodes) {
                         if (n != currNode) {
                             if(n.getLeftChild() == null && new Point(e.getX(),e.getY()).distance(n.getX() - SNAP_OFFSET_X, n.getY()+SNAP_OFFSET_Y) < 50) {
-//                            if (n.getLeftChild() == null && new Rectangle(n.getX() - (int)(SNAP_OFFSET_X*1.5), n.getY() + SNAP_OFFSET_Y, n.getDiameter(), n.getDiameter()).contains(e.getX(), e.getY())) {
                                 if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
                                     snapNode = new Node(0, n.getX() - SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
                                     snapPreviewParent = n;
                                     break;
                                 }
                             } else if (n.getRightChild() == null && new Point(e.getX(),e.getY()).distance(n.getX() + SNAP_OFFSET_X, n.getY()+SNAP_OFFSET_Y) < 50) {
-//                            } else if (n.getRightChild() == null && new Rectangle(n.getX() + (int)(SNAP_OFFSET_X*1.5), n.getY() + SNAP_OFFSET_Y, n.getDiameter(), n.getDiameter()).contains(e.getX(), e.getY())) {
                                 if (currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && currNode.getLeftChild() != n && currNode.getRightChild() != n) {
                                     snapNode = new Node(0, n.getX() + SNAP_OFFSET_Y, n.getY() + SNAP_OFFSET_Y, null, null);
                                     snapPreviewParent = n;
@@ -121,7 +117,7 @@ public class Panel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
-                if(mouse.intersects(toolNode) && buttonName.equals("Play") /*nodes.size() == 0*/) {
+                if(mouse.intersects(toolNode) && buttonName.equals("Play")) {
                     range = (int)(Math.random() * 250);
                     while(range < 50) {
                         range = (int)(Math.random() * 250);
@@ -131,39 +127,41 @@ public class Panel extends JPanel {
                     buttonName = "Check";
                     z = 0;
                     c = 0;
-//                    x*=2;
 
                 }
-                else if(mouse.intersects(toolNode) && buttonName.equals("Check") /*nodes.size() != 0*/) {
-
-                    System.out.println(startValidation());
-                    total += c + (z/100.0);
-
-
-                    //stores time value
-                    if(total<10) {
-                        new DecimalFormat("#.##").format(total);
-                    }else if(total <100){
-                        new DecimalFormat("##.##").format(total);
-                    }else{
-                        new DecimalFormat("###.##").format(total);
-                    }
-                   System.out.println(total);
+                else if(mouse.intersects(toolNode) && buttonName.equals("Check")) {
 
 
                     if(startValidation()) {
-//                        System.out.println(total);
-                        timeBonus = (1000/(int)Math.round(total));
-                        score = score + 100 + (x-2)*50 +timeBonus + balanceBonus;
+
+                        //stores time value
+
+                        total += c + (z/100.0);
+                        if(total<10) {
+                            new DecimalFormat("#.##").format(total);
+                        }else if(total <100){
+                            new DecimalFormat("##.##").format(total);
+                        }else{
+                            new DecimalFormat("###.##").format(total);
+                        }
+
+
+
+                        levelBonus = x*10;
+                        timeBonus = ((1000*x)/(int)Math.round(total));
+                        score = score + 100 + levelBonus +timeBonus + balanceBonus;
+
+                        buttonName = "Next Level";
+
+                    } else {
+                        isValid = false;
                     }
 
-                    buttonName = "Next Level";
 
                 } else if (mouse.intersects(toolNode) && buttonName.equals("Next Level")) {
                     nodes.clear();
                     x*=2;
                     level();
-//                    total += c + (z/100.0);
                     z = 0;
                     c = 0;
                 }
@@ -264,8 +262,6 @@ public class Panel extends JPanel {
         }
         if(heads.size() == 1){
            return heads.get(0);
-
-
         } else{
             return null;
         }
@@ -296,10 +292,10 @@ public class Panel extends JPanel {
 
     public boolean startValidation() {
         if(gotHead() != null) {
-            System.out.println(gotHead().getValue());
+//            System.out.println(gotHead().getValue());
             return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
         }else{
-            System.out.println("null");
+//            System.out.println("null");
             return false;
         }
         //System.out.println(gotHead().getValue());
@@ -346,12 +342,17 @@ public class Panel extends JPanel {
 
         drawToolbar(g2);
 
+        //draw scoring if in scoring phase
         if(buttonName.equals("Next Level") && startValidation()) {
             g2.setColor(Color.green);
             g2.drawString("Correct Tree: " + "+" + "100", 400,400);
             g2.drawString("Level Bonus: " +  "+" + (x-2)*50, 400, 450);
             g2.drawString("Time Bonus: " + "+" + timeBonus, 400, 500);
         }
+//         else if (buttonName.equals("Next Level") && !startValidation()) {
+//            g2.setColor(Color.RED);
+//            g2.drawString("Incorrect Tree!",400,450);
+//        }
 
 
     }
@@ -366,35 +367,38 @@ public class Panel extends JPanel {
 
 
     public void drawToolbar(Graphics2D g2) {
-
+        System.out.println(isValid);
         g2.setColor(Color.RED);
         g2.fill(toolNode);
         g2.setColor(Color.BLUE);
-        g2.fill(deleteNode);
+//        g2.fill(deleteNode);
         g2.setColor(Color.BLACK);
-
         g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
-        g2.setColor(Color.WHITE);
-        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+//        g2.setColor(Color.WHITE);
+//        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
         //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
         g2.setColor(Color.BLACK);
         Font currentFont = g2.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
         g2.setFont(newFont);
         g2.drawString(c + "", 55, 50);
-        if(isValid == false){
+        if(!isValid){
             g2.drawString("Keep Trying!", getWidth()/2, getHeight()/2);
         }
+
+        g2.drawString("Score: " + score, 50,100);
         if (c < 10) {
             g2.drawString("." + z + "", 75, 50);
         } else if (c < 100) {
             g2.drawString("." + z, 95, 50);
-        } else
+        } else {
             g2.drawString("." + z, 115, 50);
         }
-        g2.drawString("Score: " + score, 50, 100);
+
+        }
+//        g2.drawString("Score: " + score, 50, 100);
 
     }
 
 
-}
+

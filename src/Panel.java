@@ -1,3 +1,5 @@
+import javafx.scene.layout.Pane;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +11,7 @@ public class Panel extends JPanel {
     private static ArrayList<Node> nodes = new ArrayList<>();
     private Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
 
-//    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
+    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     private Node currNode,snapNode,snapPreviewParent,lerpNode;
 
@@ -21,10 +23,13 @@ public class Panel extends JPanel {
 
     private int score = 0;
     private int levelBonus, timeBonus, balanceBonus;
+//    private int frame = 1;
+//    private boolean start = false;
 
     //snap animation stuff
     private int lerpFrame = 1;
     private Point animationPoint = new Point();
+
 
     private final int FRAMES_PER_SECOND = 60;
     private final int SNAP_OFFSET_X = 100;

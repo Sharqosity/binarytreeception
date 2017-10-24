@@ -1,3 +1,5 @@
+import javafx.scene.layout.Pane;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +11,7 @@ public class Panel extends JPanel {
     private static ArrayList<Node> nodes = new ArrayList<>();
     private Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
 
-//    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
+    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     private Node currNode,snapNode,snapPreviewParent,lerpNode;
 
@@ -33,6 +35,7 @@ public class Panel extends JPanel {
     private int x = 3;
     private String buttonName = "Play";
 
+    private boolean isValid = true;
     public Panel() {
         initControls();
         Timer timer = new Timer(1000/FRAMES_PER_SECOND, e -> {
@@ -261,8 +264,18 @@ public class Panel extends JPanel {
         }
         if(heads.size() == 1){
            return heads.get(0);
+
+
         } else{
             return null;
+        }
+    }
+
+
+    public void levelBoss(){
+        for (int i = 0; i < x; i++) {
+            //nodes.add(new Node((int)Math.PI, 200, 200, null, null));
+
         }
     }
 
@@ -282,8 +295,16 @@ public class Panel extends JPanel {
 
 
     public boolean startValidation() {
-        System.out.println(gotHead().getValue());
-        return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+        if(gotHead() != null) {
+            System.out.println(gotHead().getValue());
+            return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }else{
+            System.out.println("null");
+            return false;
+        }
+        //System.out.println(gotHead().getValue());
+
+        //return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     public boolean validateTree(Node n, int low, int high) {
@@ -349,22 +370,26 @@ public class Panel extends JPanel {
         g2.setColor(Color.RED);
         g2.fill(toolNode);
         g2.setColor(Color.BLUE);
-//        g2.fill(deleteNode);
+        g2.fill(deleteNode);
         g2.setColor(Color.BLACK);
+
         g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
-//        g2.setColor(Color.WHITE);
-//        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
+        g2.setColor(Color.WHITE);
+        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
         //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
         g2.setColor(Color.BLACK);
         Font currentFont = g2.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
         g2.setFont(newFont);
         g2.drawString(c + "", 55, 50);
+        if(isValid == false){
+            g2.drawString("Keep Trying!", getWidth()/2, getHeight()/2);
+        }
         if (c < 10) {
             g2.drawString("." + z + "", 75, 50);
         } else if (c < 100) {
             g2.drawString("." + z, 95, 50);
-        } else {
+        } else
             g2.drawString("." + z, 115, 50);
         }
         g2.drawString("Score: " + score, 50, 100);

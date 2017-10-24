@@ -172,13 +172,6 @@ public class Panel extends JPanel {
                 }
 
 
-
-
-//                if(mouse.intersects(deleteNode)){
-//                    nodes.clear();
-//                    x*=2;
-//                    level();
-//                }
                 for(Node n : nodes) {
                     if(mouse.intersects(new Rectangle(n.getX()-n.getDiameter()/2, n.getY()-n.getDiameter()/2, n.getDiameter(), n.getDiameter()))) {
                         currNode = n;

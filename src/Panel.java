@@ -22,6 +22,7 @@ public class Panel extends JPanel {
     private double total;
 
     private int frame = 1;
+    private boolean start = false;
 
     private Point animationPoint = new Point();
 
@@ -37,10 +38,12 @@ public class Panel extends JPanel {
     public Panel() {
         initControls();
         Timer timer = new Timer(1000/FRAMES_PER_SECOND, e -> {
-            z++;
-            if (z % FRAMES_PER_SECOND == 0) {
-                z = 0;
-                c++;
+            if(start == true) {
+                z++;
+                if (z % FRAMES_PER_SECOND == 0) {
+                    z = 0;
+                    c++;
+                }
             }
 
             if (lerpNode != null && snapPreviewParent != null) {
@@ -120,6 +123,7 @@ public class Panel extends JPanel {
                     while(range < 50) {
                         range = (int)(Math.random() * 250);
                     }
+                    start = true;
                     level();
                     currNode = nodes.get(nodes.size() - 1);
                     buttonName = "Next Level";

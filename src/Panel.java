@@ -11,7 +11,7 @@ public class Panel extends JPanel {
     private static ArrayList<Node> nodes = new ArrayList<>();
     private Rectangle toolNode = new Rectangle(1155, 370, 100, 100);
 
-    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
+//    private Rectangle deleteNode = new Rectangle(1155, 570, 100, 100);
     private Rectangle mouse = new Rectangle(-999, -999, 12, 22);
     private Node currNode,snapNode,snapPreviewParent,lerpNode;
 
@@ -23,8 +23,6 @@ public class Panel extends JPanel {
 
     private int score = 0;
     private int levelBonus, timeBonus, balanceBonus;
-//    private int frame = 1;
-//    private boolean start = false;
 
     //snap animation stuff
     private int lerpFrame = 1;
@@ -79,7 +77,7 @@ public class Panel extends JPanel {
         timer.start();
     }
 
-    public void initControls() {
+    private void initControls() {
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -134,6 +132,7 @@ public class Panel extends JPanel {
                     c = 0;
 
                 }
+
                 else if(mouse.intersects(toolNode) && buttonName.equals("Check")) {
                     total += c + (z/100.0);
                     if(total<10) {
@@ -144,8 +143,7 @@ public class Panel extends JPanel {
                         new DecimalFormat("###.##").format(total);
                     }
 
-                    if(startValidation()) {
-
+                    if(startValidation()==1) {
 
                         levelBonus = x*10;
                         timeBonus = ((500+200*x)/(int)Math.round(total));
@@ -153,8 +151,11 @@ public class Panel extends JPanel {
 
                         buttonName = "Next Level";
 
-                    } else {
+                    } else if(startValidation() == 0){
                         isValid = false;
+
+                    } else {
+                        //the user failed
                     }
 
 
@@ -186,7 +187,6 @@ public class Panel extends JPanel {
                 for(Node n :nodes) {
                     if (n != currNode) {
                         if(new Point(e.getX(), e.getY()).distance(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y) < 50) {
-//                        if (mouse.intersects(new Rectangle(n.getX() - SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter(), n.getDiameter()))) {
                             if (currNode != null && currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getLeftChild() == null) {
                                 n.setLeftChild(currNode);
                                 currNode.setParent(n);
@@ -196,8 +196,6 @@ public class Panel extends JPanel {
                                 break;
                             }
                         } else if (new Point(e.getX(), e.getY()).distance(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y) < 50) {
-
-//                        } else if (mouse.intersects(new Rectangle(n.getX() + SNAP_OFFSET_X, n.getY() + SNAP_OFFSET_Y, n.getDiameter(), n.getDiameter()))) {
                             if (currNode != null && currNode.getParent() == null && !currNode.isDescendantOf(n) && !currNode.isAncestorOf(n) && n.getRightChild() == null) {
                                 n.setRightChild(currNode);
                                 currNode.setParent(n);
@@ -245,7 +243,7 @@ public class Panel extends JPanel {
         });
     }
 
-    public Node gotHead() {
+    private Node gotHead() {
         ArrayList<Node> heads = new ArrayList<>();
 
         for (int i = 0; i < nodes.size(); i++) {
@@ -269,7 +267,7 @@ public class Panel extends JPanel {
         }
     }
 
-    public void level(){
+    private void level(){
         for (int i = 0; i < x; i++) {
             defaultValue = (int)(Math.random() * range);
             for(int j = 0; j < nodes.size(); j++) {
@@ -284,20 +282,28 @@ public class Panel extends JPanel {
     }
 
 
-    public boolean startValidation() {
-        if(gotHead() != null) {
-//            System.out.println(gotHead().getValue());
-            return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
-        }else{
-//            System.out.println("null");
-            return false;
-        }
-        //System.out.println(gotHead().getValue());
+    private int startValidation() {
 
-        //return validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+
+        //-1: Failed
+        //0: Unfinished
+        //1: Good
+
+        if (gotHead() != null) {
+            if (validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE)) {
+                return 1;
+            } else {
+                return -1;
+            }
+        } else {
+            return 0;
+        }
+
     }
 
-    public boolean validateTree(Node n, int low, int high) {
+
+
+    private boolean validateTree(Node n, int low, int high) {
         if(n == null) {
             return true;
         }
@@ -337,7 +343,7 @@ public class Panel extends JPanel {
         drawToolbar(g2);
 
         //draw scoring if in scoring phase
-        if(buttonName.equals("Next Level") && startValidation()) {
+        if(buttonName.equals("Next Level") && startValidation()==1) {
             g2.setColor(Color.green);
             g2.drawString("Correct Tree: " + "+" + "100", 400,400);
             g2.drawString("Level Bonus: " +  "+" + (x-2)*50, 400, 450);
@@ -357,7 +363,7 @@ public class Panel extends JPanel {
 //    }
 
 
-    public void drawToolbar(Graphics2D g2) {
+    private void drawToolbar(Graphics2D g2) {
 
 
         if (buttonName.equals("Play")) {

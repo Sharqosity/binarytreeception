@@ -381,7 +381,17 @@ public class Panel extends JPanel {
         } else {
             g2.drawString("." + z, 115, 50);
         }
-
+        if(level == 0) {
+            g2.setFont(new Font("Courier", Font.BOLD, 50));
+            g2.setColor(Color.GREEN);
+            g2.drawString("Menu", 450, 50);
+            g2.setColor(Color.CYAN);
+            g2.setFont(new Font("Courier", Font.BOLD, 100));
+            g2.drawString("PLAY", 400, 400);
+            if (ex < 650 && ex > 250 && why > 250 && why < 500) {
+                level = 1;
+                repaint();
+            }
         }
 
     }

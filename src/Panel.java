@@ -42,7 +42,7 @@ public class Panel extends JPanel {
     public Panel() {
         initControls();
         Timer timer = new Timer(1000/FRAMES_PER_SECOND, e -> {
-            if(!buttonName.equals("Play") && !buttonName.equals("Next Level")) {
+            if(buttonName.equals("Check")) {
                 z++;
                 if (z % FRAMES_PER_SECOND == 0) {
                     z = 0;
@@ -135,25 +135,20 @@ public class Panel extends JPanel {
 
                 }
                 else if(mouse.intersects(toolNode) && buttonName.equals("Check")) {
-
+                    total += c + (z/100.0);
+                    if(total<10) {
+                        new DecimalFormat("#.##").format(total);
+                    }else if(total <100){
+                        new DecimalFormat("##.##").format(total);
+                    }else{
+                        new DecimalFormat("###.##").format(total);
+                    }
 
                     if(startValidation()) {
 
-                        //stores time value
-
-                        total += c + (z/100.0);
-                        if(total<10) {
-                            new DecimalFormat("#.##").format(total);
-                        }else if(total <100){
-                            new DecimalFormat("##.##").format(total);
-                        }else{
-                            new DecimalFormat("###.##").format(total);
-                        }
-
-
 
                         levelBonus = x*10;
-                        timeBonus = ((1000*x)/(int)Math.round(total));
+                        timeBonus = ((500+200*x)/(int)Math.round(total));
                         score = score + 100 + levelBonus +timeBonus + balanceBonus;
 
                         buttonName = "Next Level";
@@ -165,10 +160,11 @@ public class Panel extends JPanel {
 
                 } else if (mouse.intersects(toolNode) && buttonName.equals("Next Level")) {
                     nodes.clear();
-                    x*=2;
+                    x+=2;
                     level();
                     z = 0;
                     c = 0;
+                    buttonName = "Check";
                 }
 
 
@@ -347,10 +343,7 @@ public class Panel extends JPanel {
             g2.drawString("Level Bonus: " +  "+" + (x-2)*50, 400, 450);
             g2.drawString("Time Bonus: " + "+" + timeBonus, 400, 500);
         }
-//         else if (buttonName.equals("Next Level") && !startValidation()) {
-//            g2.setColor(Color.RED);
-//            g2.drawString("Incorrect Tree!",400,450);
-//        }
+
 
 
     }
@@ -368,14 +361,10 @@ public class Panel extends JPanel {
         System.out.println(isValid);
         g2.setColor(Color.RED);
         g2.fill(toolNode);
-        g2.setColor(Color.BLUE);
-//        g2.fill(deleteNode);
+
         g2.setColor(Color.BLACK);
         g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
-//        g2.setColor(Color.WHITE);
-//        g2.drawString("Check", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
-        //g2.drawString("Delete", (int)(deleteNode.getX() + 30), (int)(deleteNode.getY() + 55));
-        g2.setColor(Color.BLACK);
+
         Font currentFont = g2.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
         g2.setFont(newFont);
@@ -394,7 +383,6 @@ public class Panel extends JPanel {
         }
 
         }
-//        g2.drawString("Score: " + score, 50, 100);
 
     }
 

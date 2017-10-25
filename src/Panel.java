@@ -122,7 +122,7 @@ public class Panel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 mouse = new Rectangle(e.getX(), e.getY(), 12, 19);
-                if(mouse.intersects(toolNode) && buttonName.equals("Play")) {
+                if(/*mouse.intersects(toolNode) && */buttonName.equals("Play")) {
                     range = (int)(Math.random() * 250);
                     while(range < 50) {
                         range = (int)(Math.random() * 250);
@@ -358,43 +358,44 @@ public class Panel extends JPanel {
 
 
     public void drawToolbar(Graphics2D g2) {
-        System.out.println(isValid);
-        g2.setColor(Color.RED);
-        g2.fill(toolNode);
 
-        g2.setColor(Color.BLACK);
-        g2.drawString(buttonName, (int)(toolNode.getX() + 20), (int)(toolNode.getY() + 55));
 
-        Font currentFont = g2.getFont();
-        Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
-        g2.setFont(newFont);
-        g2.drawString(c + "", 55, 50);
-        if(!isValid){
-            g2.drawString("Keep Trying!", getWidth()/2, getHeight()/2);
-        }
+        if (buttonName.equals("Play")) {
 
-        g2.drawString("Score: " + score, 50,100);
-        if (c < 10) {
-            g2.drawString("." + z + "", 75, 50);
-        } else if (c < 100) {
-            g2.drawString("." + z, 95, 50);
-        } else {
-            g2.drawString("." + z, 115, 50);
-        }
-        if(level == 0) {
             g2.setFont(new Font("Courier", Font.BOLD, 50));
             g2.setColor(Color.GREEN);
             g2.drawString("Menu", 450, 50);
             g2.setColor(Color.CYAN);
             g2.setFont(new Font("Courier", Font.BOLD, 100));
             g2.drawString("PLAY", 400, 400);
-            if (ex < 650 && ex > 250 && why > 250 && why < 500) {
-                level = 1;
-                repaint();
+
+        } else {
+            g2.setColor(Color.RED);
+            g2.fill(toolNode);
+
+            g2.setColor(Color.BLACK);
+            g2.drawString(buttonName, (int) (toolNode.getX() + 20), (int) (toolNode.getY() + 55));
+
+            Font currentFont = g2.getFont();
+            Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
+            g2.setFont(newFont);
+            g2.drawString(c + "", 55, 50);
+            if (!isValid) {
+                g2.drawString("Keep Trying!", getWidth() / 2, getHeight() / 2);
+            }
+
+            g2.drawString("Score: " + score, 50, 100);
+            if (c < 10) {
+                g2.drawString("." + z + "", 75, 50);
+            } else if (c < 100) {
+                g2.drawString("." + z, 95, 50);
+            } else {
+                g2.drawString("." + z, 115, 50);
             }
         }
 
     }
+}
 
 
 

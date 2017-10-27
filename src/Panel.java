@@ -370,10 +370,10 @@ public class Panel extends JPanel {
 
             g2.setFont(new Font("Courier", Font.BOLD, 50));
             g2.setColor(Color.GREEN);
-            g2.drawString("Menu", 450, 50);
+            g2.drawString("Menu", 580, 50);
             g2.setColor(Color.CYAN);
             g2.setFont(new Font("Courier", Font.BOLD, 100));
-            g2.drawString("PLAY", 400, 400);
+            g2.drawString("PLAY", 525, 400);
 
         } else {
             g2.setColor(Color.RED);
@@ -388,6 +388,7 @@ public class Panel extends JPanel {
             g2.drawString(c + "", 55, 50);
             if (!isValid) {
                 g2.drawString("Keep Trying!", getWidth() / 2, getHeight() / 2);
+
             }
 
             g2.drawString("Score: " + score, 50, 100);

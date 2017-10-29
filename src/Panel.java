@@ -15,9 +15,11 @@ public class Panel extends JPanel {
 
     private int c,z;
     private double total;
+    private Timer timer;
 
     private int score = 0;
     private int levelBonus, timeBonus, balanceBonus;
+    private int lives = 2;
 
     //snap animation stuff
     private int lerpFrame = 1;
@@ -33,11 +35,12 @@ public class Panel extends JPanel {
 
     private boolean isValid = true;
 
+
     public Panel() {
         //adds all mouse events!
         initControls();
 
-        Timer timer = new Timer(1000 / FRAMES_PER_SECOND, e -> {
+        timer = new Timer(1000 / FRAMES_PER_SECOND, e -> {
             //steps timer
             if (buttonName.equals("Check")) {
                 z++;
@@ -178,6 +181,7 @@ public class Panel extends JPanel {
                             isValid = false;
 
                         } else { //the user failed
+                            lives--;
                             isValid = false;
                         }
 
@@ -365,6 +369,12 @@ public class Panel extends JPanel {
                 g2.drawString("Correctly Balanced: " + "+" + balanceBonus, 400, 550);
             }
         }
+
+        if(lives < 1) {
+            g2.setColor(Color.red);
+            g2.drawString("You ran out of lives! Your final score is: " + score, 300, 360);
+            timer.stop();
+        }
     }
 
     private void drawToolbar(Graphics2D g2) {
@@ -373,13 +383,13 @@ public class Panel extends JPanel {
         if (buttonName.equals("Play")) {
             g2.setFont(new Font("Roboto", Font.BOLD, 50));
             g2.setColor(Color.GREEN);
-            g2.drawString("Tree Building Game", 450, 50);
+            g2.drawString("Binary Tree Building Game", 640-336, 100);
             g2.setColor(Color.CYAN);
             g2.setFont(new Font("Roboto", Font.BOLD, 100));
-            g2.drawString("PLAY", 400, 400);
+            g2.drawString("PLAY", 640-125, 360);
             g2.setColor(Color.black);
             g2.setFont(new Font("Roboto", Font.PLAIN, 36));
-            g2.drawString("Drag nodes to make a tree. Right click to disconnect a node",200,600);
+            g2.drawString("Drag nodes to make a tree. Right click on a node to disconnect it",80,650);
 
         } else { //check/next level button
             g2.setColor(Color.RED);
@@ -391,12 +401,11 @@ public class Panel extends JPanel {
             Font currentFont = g2.getFont();
             Font newFont = currentFont.deriveFont(currentFont.getSize() * 2.4F);
             g2.setFont(newFont);
+
             g2.drawString(c + "", 55, 50);
             if (!isValid) {
-                g2.drawString("Keep Trying!", getWidth() / 2, getHeight() / 2);
+                g2.drawString("Keep Trying!", 1075, 330);
             }
-
-            g2.drawString("Score: " + score, 50, 100);
 
             //----TIMER----//
             if (c < 10) {
@@ -406,6 +415,11 @@ public class Panel extends JPanel {
             } else {
                 g2.drawString("." + z, 115, 50);
             }
+            //----SCORE----//
+            g2.drawString("Score: " + score, 50, 100);
+            //----LIVES----//
+            g2.drawString("Lives: " + lives, 50, 150);
+
         }
     }
 }

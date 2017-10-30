@@ -1,6 +1,12 @@
+import javafx.scene.layout.Pane;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -302,6 +308,12 @@ public class Panel extends JPanel {
     //0: Unfinished Tree
     //1: Correct Tree
     private int startValidation() {
+
+
+        //-1: Failed
+        //0: Unfinished
+        //1: Good
+
         if (gotHead() != null) {
             if (validateTree(gotHead(), Integer.MIN_VALUE, Integer.MAX_VALUE)) {
                 return 1;

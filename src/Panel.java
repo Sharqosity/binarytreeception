@@ -167,8 +167,9 @@ public class Panel extends JPanel {
                             new DecimalFormat("###.##").format(total);
                         }
 
+                        //if tree correct, score player
                         if (startValidation() == 1) {
-                            levelBonus = x * 10;
+                            levelBonus = 70 + (x * 10);
                             timeBonus = (int)(10000*(1/(x + ((total*5)/3))));
 
                             if (gotHead().maxDepth(gotHead()) > ((int) (Math.log(x) / Math.log(2))) + 1) {
@@ -375,7 +376,7 @@ public class Panel extends JPanel {
         if(buttonName.equals("Next Level") && startValidation()==1) {
             g2.setColor(Color.green);
             g2.drawString("Correct Tree: " + "+" + "100", 400,400);
-            g2.drawString("Level Bonus: " +  "+" + (x-2)*50, 400, 450);
+            g2.drawString("Level Bonus: " +  "+" + levelBonus, 400, 450);
             g2.drawString("Time Bonus: " + "+" + timeBonus, 400, 500);
             if(balanceBonus > 0) {
                 g2.drawString("Correctly Balanced: " + "+" + balanceBonus, 400, 550);
